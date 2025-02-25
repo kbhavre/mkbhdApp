@@ -5,48 +5,56 @@ import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 
 const DownloadPicture = ({ pictureOpen, setPictureOpen }) => {
   // ref
-  const bottomSheetRef = useRef<BottomSheet>(null);
+  const bottomSheetRef = useRef(null);
 
-  // Open Bottom Sheet when `pictureOpen` changes
+  // Handle the bottom sheet visibility when pictureOpen changes
   useEffect(() => {
     if (pictureOpen) {
       bottomSheetRef.current?.expand();
+    } else {
+      bottomSheetRef.current?.close();
     }
   }, [pictureOpen]);
 
   // Handle closing of the bottom sheet
-  const handleSheetChanges = useCallback((index: number) => {
+  const handleSheetChanges = useCallback((index) => {
     console.log('handleSheetChanges', index);
     if (index === -1) {
       setPictureOpen(false); // Close when fully collapsed
     }
-  }, []);
+  }, [setPictureOpen]);
 
   return (
-    <GestureHandlerRootView style={styles.container}>
+    <View style={styles.container}>
       <BottomSheet
         ref={bottomSheetRef}
-        index={-1} // Initially hidden
-        snapPoints={['99%']} // Define height of the bottom sheet
+        index={pictureOpen ? 0 : -1} // Controlled by the pictureOpen prop
+        snapPoints={["95%"]}
         onChange={handleSheetChanges}
         enablePanDownToClose={true}
         handleIndicatorStyle={{height: 0}}
+        backgroundStyle={styles.bottomSheetBackground}
       >
         <BottomSheetView style={styles.contentContainer}>
-          <Text>Awesome 🎉</Text>
+          <Text>Awesome hey there 🎉</Text>
         </BottomSheetView>
       </BottomSheet>
-    </GestureHandlerRootView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    ...StyleSheet.absoluteFillObject, // Position the component over the entire screen
+    zIndex: 999, // Ensure it's above other components
   },
   contentContainer: {
     flex: 1,
     alignItems: 'center',
+    padding: 16,
+  },
+  bottomSheetBackground: {
+    backgroundColor: 'white',
   },
 });
 

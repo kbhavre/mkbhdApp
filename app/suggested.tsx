@@ -7,4 +7,4 @@ export default function Suggested() {
       <Text>suggested</Text>
     </View>
   )
-}
+} 
