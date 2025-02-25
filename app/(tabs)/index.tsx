@@ -6,11 +6,11 @@ import useWallpapers, { Wallpaper } from '@/hooks/useWallpapers';
 import ImageCard from '@/components/ImageCard';
 import { ThemedView } from '@/components/ThemedView';
 import DownloadPicture from '@/components/BottomSheet';
+import SplitView from '@/components/SplitView';
 
 
 export default function Explore() {
   const wallpapers = useWallpapers();
-  const [selectedWallpaper, setSelectedWallpaper] = useState<null | Wallpaper>(null);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -23,52 +23,29 @@ export default function Explore() {
           />
         }
       >
-
-        <ThemedView style={styles.container}>
-          <ThemedView style={styles.innerContainer}>
-            <FlatList
-             data={wallpapers.filter((_, index) => index%2 ==1)}
-              renderItem={({ item }) => <View style={styles.imageContainer}>
-                <ImageCard wallpaper={item} onPress={()=>{
-                  setSelectedWallpaper(item);
-                }} />
-              </View>}
-              keyExtractor={(item) => item.name}
-            />
-          </ThemedView>
-          <ThemedView style={styles.innerContainer}>
-            <FlatList
-              data={wallpapers.filter((_, index) => index%2 ==0)}
-              renderItem={({ item }) => <View style={styles.imageContainer}>
-              <ImageCard wallpaper={item} onPress={()=>{
-                  setSelectedWallpaper(item);
-                }} />
-            </View>}
-              keyExtractor={(item) => item.name}
-            />
-          </ThemedView>
-        </ThemedView>
+        <SplitView wallpapers={wallpapers}/>
+        
       </ParallaxScrollView>
 
-      {
+      {/* {
   selectedWallpaper && <DownloadPicture wallpaper={selectedWallpaper} pictureOpen={true} setPictureOpen={() => setSelectedWallpaper(null)} />
-}
+} */}
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: "row",
-    flex: 1
+      flexDirection: "row",
+      flex: 1
   },
   innerContainer: {
-    flex: 1,
-    padding: 4,
+      flex: 1,
+      padding: 4,
   },
   imageContainer: {
-    paddingVertical: 10,
+      paddingVertical: 10,
 
   }
 
-})
+}) 
