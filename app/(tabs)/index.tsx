@@ -1,6 +1,3 @@
-
-
-
 import { View, Text, Image, StyleSheet, FlatList } from 'react-native';
 import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -54,7 +51,7 @@ export default function Explore() {
       </ParallaxScrollView>
 
       {
-  selectedWallpaper && <DownloadPicture pictureOpen={true} setPictureOpen={() => setSelectedWallpaper(null)} />
+  selectedWallpaper && <DownloadPicture wallpaper={selectedWallpaper} pictureOpen={true} setPictureOpen={() => setSelectedWallpaper(null)} />
 }
     </SafeAreaView>
   );
