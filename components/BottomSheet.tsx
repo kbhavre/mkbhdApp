@@ -1,17 +1,17 @@
 import React, { useCallback, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Image, Button, useColorScheme } from 'react-native';
-import { GestureHandlerRootView, Pressable } from 'react-native-gesture-handler';
+import { View, Text, StyleSheet, Image, useColorScheme, Pressable } from 'react-native';
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
-import { Wallpaper } from '@/hooks/useWallpapers';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { ThemedText } from './ThemedText';
+import { ThemedView } from './ThemedView';
+import { Colors } from '@/constants/Colors';
 
 const DownloadPicture = ({ pictureOpen, setPictureOpen, wallpaper }) => {
-  // ref
+  
   const bottomSheetRef = useRef(null);
+  const theme = useColorScheme() ?? 'light';
 
-  // Handle the bottom sheet visibility when pictureOpen changes
   useEffect(() => {
     if (pictureOpen) {
       bottomSheetRef.current?.expand();
@@ -20,64 +20,99 @@ const DownloadPicture = ({ pictureOpen, setPictureOpen, wallpaper }) => {
     }
   }, [pictureOpen]);
 
-  // Handle closing of the bottom sheet
+
   const handleSheetChanges = useCallback((index) => {
     console.log('handleSheetChanges', index);
     if (index === -1) {
-      setPictureOpen(false); // Close when fully collapsed
+      setPictureOpen(false); 
     }
   }, [setPictureOpen]);
 
   return (
     <BottomSheet
       ref={bottomSheetRef}
-      index={pictureOpen ? 0 : -1} // Controlled by the pictureOpen prop
+      index={pictureOpen ? 0 : -1}
       snapPoints={["95%"]}
       onChange={handleSheetChanges}
       enablePanDownToClose={true}
       handleIndicatorStyle={{ display: "none" }}
       handleStyle={{ display: "none" }}
+      backgroundStyle={{
+        backgroundColor: theme === 'light' ? Colors.light.background : Colors.dark.background
+      }}
     >
       <BottomSheetView style={styles.contentContainer}>
-        <Image
-          style={styles.image}
-          source={{ uri: wallpaper.url }}
-        />
-        <View style={styles.topbar}>
-          <AntDesign name="close" size={24} color="white" />
-          <View style={styles.topbarInner}>
-            <FontAwesome name="heart" size={24} color="white" />
-            <FontAwesome name="share" size={24} color="white" style={{paddingLeft: 10}} />
+        <ThemedView style={{flex: 1}}>
+          <Image
+            style={styles.image}
+            source={{ uri: wallpaper.url }}
+          />
+          <View style={styles.topbar}>
+            <AntDesign 
+              name="close" 
+              size={24} 
+              color={theme === 'light' ? "white" : Colors.dark.text} 
+              onPress={() => setPictureOpen(false)}
+            />
+            <View style={styles.topbarInner}>
+              <FontAwesome 
+                name="heart" 
+                size={24} 
+                color={theme === 'light' ? "white" : Colors.dark.text} 
+              />
+              <FontAwesome 
+                name="share" 
+                size={24} 
+                color={theme === 'light' ? "white" : Colors.dark.text} 
+                style={{paddingLeft: 10}} 
+              />
+            </View>
           </View>
-        </View>
-        <View style={styles.textContainer}>
-        <ThemedText style={styles.text}>{wallpaper.name}</ThemedText>
-        </View>
-        
-        {/* <Button title='Download'></Button> */}
-        <DownloadButton/>
+          <ThemedView style={styles.textContainer}>
+            <ThemedText style={styles.text}>{wallpaper.name}</ThemedText>
+          </ThemedView>
+          
+          <DownloadButton />
+        </ThemedView>
       </BottomSheetView>
     </BottomSheet>
-
   );
 };
 
 function DownloadButton() {
-  
   const theme = useColorScheme() ?? "light";
 
-  return <Pressable style={{
-    backgroundColor: "black",
-    padding: 10, 
-    marginHorizontal: 40, 
-    justifyContent: "center", 
-    flexDirection: "row",
-    borderRadius: 10,
-    marginVertical: 20
-    }}>
-       <FontAwesome name="download" size={24} color="white" style={{paddingRight: 10}} />
-    <Text style={{fontSize: 20, color: "white"}}>Download</Text>
-  </Pressable>
+  return (
+    <Pressable 
+      style={{
+        backgroundColor: "black",
+        padding: 10,
+        marginHorizontal: 40,
+        marginVertical: 20,
+        justifyContent: "center",
+        flexDirection: "row",
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: theme === 'light' ? Colors.light.text : Colors.dark.icon,
+      }}
+    >
+      <FontAwesome 
+        name="download" 
+        size={24} 
+        color={theme === 'light' ? "white" : Colors.dark.icon} 
+        style={{paddingRight: 10}} 
+      />
+      <Text 
+        style={{
+          fontSize: 20, 
+          color: theme === 'light' ? "white" : Colors.dark.text,
+          fontWeight: "600",
+        }}
+      >
+        Download
+      </Text>
+    </Pressable>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -88,9 +123,6 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
-  },
-  bottomSheetBackground: {
-    backgroundColor: 'white',
   },
   image: {
     height: "70%",
@@ -110,7 +142,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   textContainer: {
-     width: "100%",
+    width: "100%",
   },
   text: {
     textAlign: "center",
