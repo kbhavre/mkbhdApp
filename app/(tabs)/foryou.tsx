@@ -20,6 +20,10 @@ export default function ForYou() {
       tabBarActiveTintColor: Colors[theme].tint,
       tabBarStyle: {
         backgroundColor: Colors[theme].background
+      },
+      tabBarIndicatorStyle: {
+        backgroundColor: Colors[theme].indicator,
+        height: 5,
       }
     }}
     >
