@@ -1,7 +1,3 @@
-
-
-
-
 import { View, FlatList, StyleSheet } from 'react-native';
 import React, { useState, useCallback } from 'react';
 import { ThemedView } from './ThemedView';
@@ -9,7 +5,10 @@ import ImageCard from './ImageCard';
 import { Wallpaper } from '@/hooks/useWallpapers';
 import DownloadPicture from './BottomSheet';
 
-export default function SplitView({ wallpapers }: { wallpapers: Wallpaper[] }) {
+export default function SplitView({ wallpapers, onScroll }: { 
+    wallpapers: Wallpaper[];
+    onScroll?: (yOffset: number) => void; 
+}) {
     const [selectedWallpaper, setSelectedWallpaper] = useState<null | Wallpaper>(null);
 
     // Memoized function to close the bottom sheet
@@ -21,8 +20,12 @@ export default function SplitView({ wallpapers }: { wallpapers: Wallpaper[] }) {
         <>
             <ThemedView style={styles.container}>
                 <FlatList
+                    onScroll={(e) => {
+                        let yOffset = e.nativeEvent.contentOffset.y;
+                        onScroll?.(yOffset); 
+                    }}
                     data={wallpapers}
-                    numColumns={2} // Set number of columns
+                    numColumns={2}
                     renderItem={({ item }) => (
                         <View style={styles.imageContainer}>
                             <ImageCard
@@ -52,6 +55,6 @@ const styles = StyleSheet.create({
     },
     imageContainer: {
         flex: 1,
-        padding: 4, // Adjust spacing
+        padding: 4, 
     },
 });

@@ -1,50 +1,60 @@
-import { View, Text, Image, StyleSheet, FlatList } from 'react-native';
+import { Dimensions, Image, StyleSheet, Text, View } from 'react-native';
 import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import useWallpapers, { Wallpaper } from '@/hooks/useWallpapers';
-import ImageCard from '@/components/ImageCard';
-import { ThemedView } from '@/components/ThemedView';
-import DownloadPicture from '@/components/BottomSheet';
+import useWallpapers from '@/hooks/useWallpapers';
 import SplitView from '@/components/SplitView';
+import Carousel from 'react-native-reanimated-carousel';
+import useCarousel from '@/hooks/useCarousel';
+import Animated from 'react-native-reanimated';
 
+const TOPBAR_HEIGHT = 250;
 
 export default function Explore() {
   const wallpapers = useWallpapers();
+  const width = Dimensions.get('window').width;
+  const [yOffset, setScrollY] = useState(0);
+  const carouselItems = useCarousel();
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <ParallaxScrollView
-        headerBackgroundColor={{ dark: 'black', light: 'white' }}
-        headerImage={
-          <Image
-            style={{ flex: 1 }}
-            source={{ uri: "https://wallhalla.com/thumbs/1" }}
-          />
-        }
-      >
-        <SplitView wallpapers={wallpapers}/>
-        
-      </ParallaxScrollView>
+      <View style={{ height: TOPBAR_HEIGHT - yOffset }}>
 
-      {/* {
-  selectedWallpaper && <DownloadPicture wallpaper={selectedWallpaper} pictureOpen={true} setPictureOpen={() => setSelectedWallpaper(null)} />
-} */}
+
+        <Carousel
+          loop
+          autoPlay={true}
+          width={width}
+          scrollAnimationDuration={1000}
+          // height={TOPBAR_HEIGHT - yOffset}
+          data={carouselItems}
+          renderItem={({ index }) => (
+            <Animated.View
+              style={{ flex: 1, borderWidth: 1, justifyContent: 'center' }}>
+              <Image source={{ uri: carouselItems[index] }} style={{ height: 300 }} />
+
+            </Animated.View>
+          )}
+        />
+      </View>
+      <SplitView onScroll={(yOffset) => {
+        setScrollY(yOffset)
+      }} wallpapers={wallpapers} />
+
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-      flexDirection: "row",
-      flex: 1
+    flexDirection: "row",
+    flex: 1
   },
   innerContainer: {
-      flex: 1,
-      padding: 4,
+    flex: 1,
+    padding: 4,
   },
   imageContainer: {
-      paddingVertical: 10,
+    paddingVertical: 10,
 
   }
 
